@@ -5,6 +5,15 @@
 #include <math.h>
 #include <stdlib.h>
 
+void assert(int check){
+	if(check == 1){
+		return;
+	}
+	else{
+		printf("--------------Test case failed!\n");
+	}
+}
+
 int compare(const void* a, const void* b) {
   if (*(int*)a > *(int*)b)
     return 1;
@@ -691,7 +700,7 @@ void run_council_room(int currentPlayer,struct gameState *state, int handPos){
       state->numBuys++;
 			
       //Each other player draws a card
-      for (i = 0; i <= state->numPlayers; i++) //bug added
+      for (i = 0; i < state->numPlayers; i++) //bug added
 	{
 	  if ( i != currentPlayer )
 	    {
