@@ -1,0 +1,85 @@
+        -:    0:Source:randomtestcard1.c
+        -:    0:Graph:randomtestcard1.gcno
+        -:    0:Data:randomtestcard1.gcda
+        -:    0:Runs:2
+        -:    0:Programs:1
+        -:    1:#include"dominion.h"
+        -:    2:#include"dominion_helpers.h"
+        -:    3:#include"rngs.h"
+        -:    4:#include<string.h>
+        -:    5:#include<stdio.h>
+        -:    6:#include<math.h>
+        -:    7:
+    10000:    8:int checkSmithy(int p,struct gameState *post,int handPos){
+    10000:    9:	int check = 0;
+        -:   10:	int i, n;
+        -:   11:	struct gameState pre;
+    10000:   12:	memcpy (&pre, post, sizeof(struct gameState));
+        -:   13:
+        -:   14:	//printf("Testing smithy with handPos = %d, Handcount = %d, deckCount = %d, discardCount = %d\n",handPos, pre.handCount[p],pre.deckCount[p],pre.discardCount[p]);
+    10000:   15:	run_smithy(p,post,handPos);
+        -:   16:
+    10000:   17:	if(pre.deckCount[p] >= 3){
+     9934:   18:		if(!assert (post->deckCount[p] == pre.deckCount[p] - 3)){
+        -:   19:	//		check = 1;
+        -:   20:	//		printf("post->deckCount = %d, pre.deckCount = %d\n", post->deckCount[p],pre.deckCount[p]);
+        -:   21:		}
+     9934:   22:		if(!assert (post->handCount[p] == pre.handCount[p] + 2)){
+        -:   23:	//		check = 1;
+        -:   24:	//		printf("post handcount = %d, pre handcount = %d\n", post->handCount[p], pre.handCount[p]);
+        -:   25:		}
+        -:   26:	}
+        -:   27:	else{
+       66:   28:		if(!assert (post->deckCount[p] == pre.discardCount[p] + pre.deckCount[p] - 3)){
+        -:   29:	//		check = 1;
+        -:   30:	//		printf("post->deckCount = %d, pre.deckCount = %d\n", post->deckCount[p],pre.discardCount[p] + pre.deckCount[p] - 3);
+        -:   31:		}
+       66:   32:		if(!assert (post->handCount[p] == pre.handCount[p] + 2)){
+        -:   33:	//		check = 1;
+        -:   34:	//		printf("post handcount = %d, pre handcount = %d\n", post->handCount[p], pre.handCount[p]);
+        -:   35:		}
+        -:   36:	}
+        -:   37:	//if(check == 1){
+        -:   38:	//	printf("Testing smithy with handPos = %d, Handcount = %d, deckCount = %d, discardCount = %d\n",handPos, pre.handCount[p],pre.deckCount[p],pre.discardCount[p]);
+        -:   39:	//}
+    10000:   40:}
+        -:   41:
+        2:   42:int main(){
+        2:   43:	int num_test = 5000;
+        -:   44:	int handPos;
+        -:   45:	int i,n,j,r,p, deckCount, discardCount, handCOunt;
+        -:   46:
+        2:   47:	int k[13] = {copper,silver,gold,adventurer, council_room, feast, gardens, mine, remodel, smithy, village, baron, great_hall};
+        -:   48:
+        -:   49:	struct gameState G;
+        -:   50:
+        2:   51:	printf("Testing run_smithy.\n");
+        -:   52:
+        2:   53:	printf ("RANDOM TESTS.\n");
+        -:   54:
+        2:   55:	SelectStream(2);
+        2:   56:	PutSeed(3);
+        -:   57:
+    10002:   58:	for(i = 0; i < num_test;i++){
+263010000:   59:		for(j = 0; j < sizeof(struct gameState); j++){
+263000000:   60:			((char*)&G)[j] = floor(Random() * 256);
+        -:   61:		}
+    10000:   62:		p = floor(Random() * 2);
+    10000:   63:		G.deckCount[p] = floor(Random() * MAX_DECK);
+    10000:   64:		G.discardCount[p] = floor(Random() * MAX_DECK);
+    10000:   65:		G.handCount[p] = floor(Random() * MAX_HAND);
+    10000:   66:		G.playedCardCount = floor(Random() * MAX_HAND);
+    10000:   67:		handPos = floor(Random() * G.handCount[p]);
+        -:   68:
+    10000:   69:		for(n = 0; n < G.deckCount[p];n++) G.deck[p][n] = k[(int)floor(Random() * 13)];
+    10000:   70:		for(n = 0; n < G.discardCount[p];n++) G.discard[p][n] = k[(int)floor(Random() * 13)];
+    10000:   71:		for(n = 0; n < G.handCount[p];n++) G.hand[p][n] = k[(int)floor(Random() * 13)];
+    10000:   72:		for(n = 0; n < G.playedCardCount;n++) G.playedCards[n] = k[(int)floor(Random() * 13)];
+        -:   73:
+    10000:   74:		checkSmithy(p,&G,handPos);
+        -:   75:	}
+        -:   76:
+        2:   77:	printf("ALL TESTS OK.\n");
+        -:   78:
+        2:   79:	return 0;
+        -:   80:}

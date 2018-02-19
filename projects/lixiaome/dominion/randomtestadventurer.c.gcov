@@ -1,0 +1,101 @@
+        -:    0:Source:randomtestadventurer.c
+        -:    0:Graph:randomtestadventurer.gcno
+        -:    0:Data:randomtestadventurer.gcda
+        -:    0:Runs:1
+        -:    0:Programs:1
+        -:    1:#include"dominion.h"
+        -:    2:#include"dominion_helpers.h"
+        -:    3:#include"rngs.h"
+        -:    4:#include<string.h>
+        -:    5:#include<stdio.h>
+        -:    6:#include<math.h>
+        -:    7:
+    40000:    8:int checkAdventurer(int drawntreasure,struct gameState *post,int p,int cardDrawn,int *temphand){
+    40000:    9:	int check = 0;
+        -:   10:	int i, n;
+    40000:   11:	int num_trea = 0;
+    40000:   12:	int pre_trea_hand = 0;
+    40000:   13:	int post_trea_hand = 0;
+        -:   14:	struct gameState pre;
+    40000:   15:	memcpy (&pre, post, sizeof(struct gameState));
+        -:   16:
+        -:   17:
+ 10025692:   18:	for(i = 0;i < pre.deckCount[p];i++) {
+  9985692:   19:		if(pre.deck[p][i] == copper||pre.deck[p][i] == silver||pre.deck[p][i] == gold) num_trea++;
+        -:   20:	}
+  9991896:   21:	for(i = 0;i < pre.discardCount[p];i++) {
+  9951896:   22:		if(pre.discard[p][i] == copper||pre.discard[p][i] == silver||pre.discard[p][i] == gold) num_trea++;
+        -:   23:	}
+ 10048288:   24:	for(i = 0;i < pre.handCount[p];i++) {
+ 10008288:   25:		if(pre.hand[p][i] == copper||pre.hand[p][i] == silver||pre.hand[p][i] == gold) pre_trea_hand++;
+        -:   26:	}
+    40000:   27:	run_adventurer(drawntreasure,post,p,cardDrawn,temphand);
+        -:   28:
+ 10128278:   29:	for(i = 0;i < post->handCount[p];i++) {
+ 10088278:   30:		if(post->hand[p][i] == copper||post->hand[p][i] == silver||post->hand[p][i] == gold) post_trea_hand++;
+        -:   31:	}
+        -:   32:
+    40000:   33:	if(num_trea >= 2){
+    39991:   34:		if(!assert (post_trea_hand == pre_trea_hand + 2)){
+        -:   35://			check = 1;
+        -:   36://			printf("post_trea_hand = %d, pre_trea_hand = %d\n", post_trea_hand,pre_trea_hand);
+        -:   37:		}
+    39991:   38:		if(!assert (post->handCount[p] == pre.handCount[p] + 2)){
+        -:   39://			check = 1;
+        -:   40://			printf("post handcount = %d, pre handcount = %d\n", post->handCount[p], pre.handCount[p]);
+        -:   41:		}
+        -:   42:	}
+        9:   43:	else if(num_trea == 1){
+        8:   44:		if(!assert (post_trea_hand == pre_trea_hand + 1)){
+        -:   45://			check = 1;
+        -:   46://			printf("post_trea_hand = %d, pre_trea_hand = %d\n", post_trea_hand,pre_trea_hand);
+        -:   47:		}
+        8:   48:		if(!assert (post->handCount[p] == pre.handCount[p] + 1)){
+        -:   49://			check = 1;
+        -:   50://			printf("post handcount = %d, pre handcount = %d\n", post->handCount[p], pre.handCount[p]);
+        -:   51:		}
+        -:   52:	}
+        -:   53://	if(check == 1){
+        -:   54://		printf("Testing adventurer with %d treasure cards in hand, %d treasure cards in the discard&deck\n",pre_trea_hand,num_trea);
+        -:   55://		printf("Handcount = %d, deckCount = %d, discardCount = %d\n",pre.handCount[p],pre.deckCount[p],pre.discardCount[p]);
+        -:   56://	}
+    40000:   57:}
+        -:   58:
+        1:   59:int main(){
+        1:   60:	int num_test = 40000;
+        1:   61:	int drawntreasure = 0;
+        1:   62:	int cardDrawn = 0;
+        -:   63:	int temphand[MAX_HAND];
+        -:   64:	int i,n,j,r,p, deckCount, discardCount, handCOunt;
+        -:   65:
+        1:   66:	int k[13] = {copper,silver,gold,adventurer, council_room, feast, gardens, mine, remodel, smithy, village, baron, great_hall};
+        -:   67:
+        -:   68:	struct gameState G;
+        -:   69:
+        1:   70:	printf("Testing run_adventurer.\n");
+        -:   71:
+        1:   72:	printf ("RANDOM TESTS.\n");
+        -:   73:
+        1:   74:	SelectStream(2);
+        1:   75:	PutSeed(3);
+        -:   76:
+    40001:   77:	for(i = 0; i < num_test;i++){
+1052040000:   78:		for(j = 0; j < sizeof(struct gameState); j++){
+1052000000:   79:			((char*)&G)[j] = floor(Random() * 256);
+        -:   80:		}
+    40000:   81:		p = floor(Random() * 2);
+    40000:   82:		G.deckCount[p] = floor(Random() * MAX_DECK);
+    40000:   83:		G.discardCount[p] = floor(Random() * MAX_DECK);
+    40000:   84:		G.handCount[p] = floor(Random() * MAX_HAND);
+        -:   85:
+    40000:   86:		for(n = 0; n < G.deckCount[p];n++) G.deck[p][n] = k[(int)floor(Random() * 13)];
+    40000:   87:		for(n = 0; n < G.discardCount[p];n++) G.discard[p][n] = k[(int)floor(Random() * 13)];
+    40000:   88:		for(n = 0; n < G.handCount[p];n++) G.hand[p][n] = k[(int)floor(Random() * 13)];
+        -:   89:
+    40000:   90:		checkAdventurer(drawntreasure,&G,p,cardDrawn,temphand);
+        -:   91:	}
+        -:   92:
+        1:   93:	printf("ALL TESTS OK.\n");
+        -:   94:
+        1:   95:	return 0;
+        -:   96:}
