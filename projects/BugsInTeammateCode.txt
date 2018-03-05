@@ -1,0 +1,57 @@
+Title:
+Dominion codes by sthune   
+
+Class:
+Serious Bug
+
+Date:  3/4/2018         
+Reported By:  Xiaomeng Li 
+Email:  lixiaome@oregonstate.edu           
+
+Is it reproducible: Yes
+
+Description
+===========
+The smithy card effect is working inappropriately. 
+
+
+Steps to Produce/Reproduce
+--------------------------
+Run the cardeffect_smithy() function unit test with the command: make cardtest1
+
+
+Expected Results
+----------------
+The card in the player's hand should get +2
+The deck in the deck should get -3
+The discard pile should be shuffled if the deck is empty
+
+Actual Results
+--------------
+None of the value above was changed
+and the program get a segmentation fault when testing with the second player
+
+---------------------------------------------------------------------------------------------------------
+
+Is it reproducible: Yes
+
+Description
+===========
+The adventurer card effect is working inappropriately. 
+
+
+Steps to Produce/Reproduce
+--------------------------
+Run the cardeffect_adventurer() function unit test with the command: make cardtest1
+
+
+Expected Results
+----------------
+player get two treasure cards in hand (handcount + 1)
+deck count -2
+
+Actual Results
+--------------
+The cards in the hand is always one more than the expected value
+The program cannot handle the situation when there are only one 
+or no treasure cards are in the discard pile or the deck
